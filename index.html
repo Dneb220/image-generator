@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Генератор изображений (Replicate)</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 50px;
+      background-color: #f2f2f2;
+    }
+    input {
+      padding: 10px;
+      width: 60%;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px 20px;
+      margin-left: 10px;
+      font-size: 16px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    img {
+      margin-top: 20px;
+      max-width: 512px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    #output {
+      margin-top: 30px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Введите описание изображения:</h2>
+  <input type="text" id="prompt" placeholder="Например: ведьма на скейте в стиле аниме">
+  <button onclick="generateImage()">Сгенерировать</button>
+
+  <div id="output">💡 Подсказка: генерация занимает 15–30 секунд.</div>
+
+  <script>
+    async function generateImage() {
+      const prompt = document.getElementById("prompt").value;
+      const outputDiv = document.getElementById("output");
+      outputDiv.innerHTML = "⏳ Генерация изображения...";
+
+      try {
+        const response = await fetch("https://replicate.imagegen.workers.dev/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ prompt: prompt })
+        });
+
+        const result = await response.json();
+
+        if (result.image) {
+          outputDiv.innerHTML = `<img src="${result.image}" alt="Generated Image">`;
+        } else {
+          outputDiv.innerHTML = "❌ Не удалось сгенерировать изображение.";
+        }
+      } catch (error) {
+        console.error("Ошибка запроса:", error);
+        outputDiv.innerHTML = "⚠️ Ошибка при генерации изображения.";
+      }
+    }
+  </script>
+
+</body>
+</html>
